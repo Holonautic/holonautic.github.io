@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" as="font" href="https://holonautic.github.io/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="https://holonautic.github.io/fonts/vendor/jost/jost-v4-latin-700.woff2"  type="font/woff2" crossorigin>
+
+
+<link rel="stylesheet" href="https://holonautic.github.io/main.css">
+
+
+
+  
+  
+    
+  
+
+  
+  
+    
+    
+  
+  
+  
+    
+  
+  
+  
+  
+    
+  
+  
+  
+
+
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+
+	
+
+
+	
+
+<title>Destructible Terrain | Boom Boom Hamster Doom</title>
+<meta name="description" content="A guide to fast voxel terrain in standalone VR.">
+<link rel="canonical" href="https://holonautic.github.io/dev/terrain/">
+
+
+  <meta name="twitter:card" content="summary_large_image">
+  
+    <meta name="twitter:image" content="https://holonautic.github.io/doks.png">
+  
+  <meta name="twitter:title" content="Destructible Terrain">
+  <meta name="twitter:description" content="A guide to fast voxel terrain in standalone VR.">
+  <meta name="twitter:site" content="@holonautic">
+  <meta name="twitter:creator" content="@holonautic">
+  
+  <meta property="og:title" content="Destructible Terrain">
+  <meta property="og:description" content="A guide to fast voxel terrain in standalone VR.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://holonautic.github.io/dev/terrain/">
+
+  
+    <meta property="og:image" content="https://holonautic.github.io/doks.png">
+  
+
+  <meta property="og:updated_time" content="">
+  <meta property="og:site_name" content="Destructible Terrain">
+
+  
+
+  
+
+  
+  <meta property="article:publisher" content="https://www.facebook.com/holonautic">
+  <meta property="article:author" content="https://www.facebook.com/holonautic">
+  <meta property="og:locale" content="en_US">
+
+
+
+
+
+  
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BreadcrumbList",
+    
+      
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          {
+            "@type": "ListItem",
+            "position":  1 ,
+            "name": "Home",
+            "item": "https://holonautic.github.io/"
+          },
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  2 ,
+            "name": "Dev",
+            "item": "https://holonautic.github.io/dev/"
+          },
+        
+      
+        
+        
+        
+        
+        
+        
+        
+        
+          
+          
+          {
+            "@type": "ListItem",
+            "position":  3 ,
+            "name": "Terrain",
+            "item": "https://holonautic.github.io/dev/terrain/"
+          },
+        
+      
+    
+  }
+</script>
+
+
+
+
+
+
+  <meta name="theme-color" content="#fff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://holonautic.github.io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://holonautic.github.io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://holonautic.github.io/favicon-16x16.png">
+  
+    <link rel="manifest" href="https://holonautic.github.io/site.webmanifest" crossorigin>
+  
+
+
+  
+    
+      <!-- KaTeX -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+    
+  
+
+</head>
+
+  
+
+<body class="docs single">
+  
+  
+  
+  
+<div class="header-bar fixed-top"></div>
+<header class="navbar fixed-top navbar-expand-md navbar-light">
+	<div class="container">
+		<input class="menu-btn order-0" type="checkbox" id="menu-btn">
+		<label class="menu-icon d-md-none" for="menu-btn"><span class="navicon"></span></label>
+		<a class="navbar-brand order-1 order-md-0 me-auto" href="https://holonautic.github.io">Boom Boom Hamster Doom</a>
+		<button id="mode" class="btn btn-link order-2 order-md-4" type="button" aria-label="Toggle mode">
+			<span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+			<span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+		</button>
+		<ul class="navbar-nav fork-me order-3 order-md-5">
+			
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://twitter.com/Holonautic"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-twitter"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg><span class="ms-2 visually-hidden">Twitter</span></a>
+					</li>
+				
+					<li class="nav-item">
+						<a class="nav-link" href="https://github.com/Holonautic"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><span class="ms-2 visually-hidden">GitHub</span></a>
+					</li>
+				
+			
+		</ul>
+		<div class="collapse navbar-collapse order-4 order-md-1">
+			<ul class="navbar-nav main-nav me-auto order-5 order-md-2">
+				
+					
+				
+				
+				
+					
+						<li class="nav-item dev active">
+							<a class="nav-link" href="https://holonautic.github.io/dev/">Devlog</a>
+						</li>
+					
+				
+			</ul>
+			<div class="break order-6 d-md-none"></div>
+			
+				<form class="navbar-form flex-grow-1 order-7 order-md-3">
+					<input id="userinput" class="form-control is-search" type="search" placeholder="Search docs..."
+						aria-label="Search docs..." autocomplete="off">
+					<div id="suggestions" class="shadow bg-white rounded"></div>
+				</form>
+			
+		</div>
+	</div>
+</header>
+
+
+
+  
+<div class="wrap container" role="document">
+  <div class="content">
+    <div class="row flex-xl-nowrap">
+	  
+<div class="col-lg-5 col-xl-4 docs-sidebar">
+	<nav class="docs-links" aria-label="Main navigation">
+			
+			
+			
+					<h3>the Technical Articles</h3>
+					<ul class="list-unstyled">
+					                           
+							<li><a class="docs-link active" href="https://holonautic.github.io/dev/terrain/">Destructible Terrain</a></li>
+					                           
+							<li><a class="docs-link" href="https://holonautic.github.io/dev/introduction/">Introduction</a></li>
+					
+					</ul>
+			
+			
+	</nav>
+</div>
+
+	  
+  
+  <nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+  	<div class="page-links">
+  			<h3>On this page</h3>
+  			<nav id="TableOfContents">
+  					<ul>
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#marching-cubes">Marching Cubes</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#what-is-a-voxel">What is a voxel?</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#implicit-surfaces">Implicit surfaces</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#the-road-to-marching-cubes">The road to marching cubes</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#smoooooth-marching-cubes">Smoooooth marching cubes</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#creating-islands">Creating islands</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#noise">Noise</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#from-noise-to-surface">From noise to surface</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#shaping-the-island">Shaping the island</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#shaping-asteroids">Shaping asteroids</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#terrain-materials">Terrain materials</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#from-voxels-to-vertices">From voxels to vertices</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#texture-sampling">Texture sampling</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#implementing-marching-cubes-terrain">Implementing marching cubes terrain</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#chunks">Chunks</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#the-dance-of-the-jobs">The dance of the jobs</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#the-coordinate-system-forest">The coordinate system forest</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#finding-your-place">Finding your place</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#a-brief-aside-on-data-ordering">A brief aside on data ordering</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#voxel-generation-the-nitty-gritty">Voxel generation: the nitty gritty</a></li>
+  							
+  									<ul>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#gradients">Gradients</a></li>
+  											
+  											<li><a href="https://holonautic.github.io/dev/terrain/#terracing">Terracing</a></li>
+  											
+  									</ul>
+  							
+  							
+  							<li><a href="https://holonautic.github.io/dev/terrain/#draw-calls-and-smoothing">Draw calls and smoothing</a></li>
+  							
+  							
+  					</ul>
+  			</nav>
+  	</div>
+  </nav>
+  
+
+      <main class="docs-content col-lg-11 col-xl-9">
+        <h1>Destructible Terrain</h1>
+        <p class="lead">Making voxel islands that you can blow up on mobile hardware.</p>
+        <p>In this article, we'll take a deep dive into how voxel terrain works in <cite>Boom Boom Hamster Doom</cite>. It's the core mechanic of the game, with everything else spinning off from that thing.</p>
+<p>I'm going to start with a little theory---nothing too dry, I promise!---and then we'll work our way down to what it takes to make it happen in VR.</p>
+<h2 id="marching-cubes">Marching Cubes</h2>
+<h3 id="what-is-a-voxel">What is a voxel?</h3>
+<p>Mention voxels and most people will imagine a grid of little cubes, like in <cite>Minecraft</cite>. This is not <em>exactly</em> wrong, but just as <a href="http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf">a pixel is not a little square</a>, a voxel is not a little cube.</p>
+<p>Voxels (<b>vo</b>lume <b>el</b>ements) are really just any pieces of data that live on a 3D grid. For our purposes, it's best to think of them as living on the <em>corners</em> of a grid, as small points. So if you have a cube, the corners of that cube are eight voxels.</p>
+<p>What sort of data can live in a voxel? Pretty much anything. It could have a value that we use to calculate the terrain surface. It could also have some terrain-related property, like how rocky the ground is here, or how badly it's been burned by explosives.</p>
+<p>Voxels can be anything, but the general guideline is that voxels should be <em>small</em>. In BBHD, a voxel is four bytes. The smaller it is, the easier it is to crunch through it...</p>
+<h3 id="implicit-surfaces">Implicit surfaces</h3>
+<p>In mathematics, an implicit surface is defined by a 3D function.</p>
+<p>Imagine you have a cloud that fills space in some region. Perhaps the inside of a cube...</p>
+<p>(cloud cube video)</p>
+<p>At any point in space, you can read out a number of how dense the cloud is at that place.</p>
+<p>(sampling a point inside the cube)</p>
+<p>Now suppose you pick a number - let's say 0.5. If you find all the points where the cloud has the value 0.5, you get a <em>surface</em>. On one side of the surface, the cloud only has values above 0.5. On the other side, the cloud only has values that are less than 0.5. The surface neatly divides space into these two regions.</p>
+<p>(cube implicit surface video)</p>
+<p>This turns out to be a very handy way of representing a surface in a game.</p>
+<h3 id="the-road-to-marching-cubes">The road to marching cubes</h3>
+<p>How is this so? Suppose you have a ball of rock. Inside the ball is solid rock, and outside the ball is empty air. We could store a grid of <i>voxels</i>, which are just one bit: either we're inside the ball or outside the ball.</p>
+<p>Why would it be useful to do this? Well, suppose someone comes along and takes a bite out of the ball. If we know which parts of space they've bitten, we can flip all the voxels that have been bitten from one to zero.</p>
+<p>However, game engines don't like to draw voxels (usually), they like to draw triangles. So we need to convert our voxels into a mesh of triangles somehow.</p>
+<p>The simplest possible marching cubes algorithm works like this. Let's take a cube with a voxel on each corner. Since there are eight voxels, and each one can take two values, there are $2^8=256$ different possible arrangements.</p>
+<p>The basic insight of <a href="https://en.wikipedia.org/wiki/Marching_cubes">Marching Cubes</a> is that this is (barring some weird edge cases) enough information to pin down the surface inside the cube. For each of these possible cubes, you need between zero and four triangles to split the different voxel values, defined by between zero and six vertices. If you do this for <em>every</em> cube, you get a surface which divides all the 1s from all the 0s.</p>
+<p>The problem with this approach is that the output tends to look very, well, blocky. You get a lot of zigzagging stair-like structures, instead of smooth terrain.</p>
+<h3 id="smoooooth-marching-cubes">Smoooooth marching cubes</h3>
+<p>How can we get something better from marching cubes? Well, imagine if, instead of just voxels storing 0 and 1, they store a number <em>between</em> 0 and 1 which is a kind of 'density', just like the cloud we discussed above. But instead of filling all of space, the density only exists on the voxel points.</p>
+<p>Now we pick some threshold value, called the <dfn>isolevel</dfn> - let's say 0.5. If the density is less than 0.5, we count it as a zero. And if it's more than 0.5, we count it as a 1.</p>
+<p>But, after we've created the triangles, we shift the vertices along the edges of the cube. We can assume that the value of the cloud varies between the values on the eight corners. So we can estimate where this continuous cloud would cross through 0.5, and then shift the triangles we generated along the edges of the cube until they are about where we think 0.5 would be.</p>
+<p>For example, let's say on one corner our voxel reads 0.2, and on the other corner, it reads 0.6. The corner of the triangle we generate should be closer to the 0.6 voxel than the 0.1 voxel. So we linearly interpolate the positions of thet wo corners, based on where the isolevel sits in the interval.</p>
+<p>With all this in mind, imagine blurring out the values of the ball of rock we discussed before: outside the ball it's a little 'rocky', and inside the ball it's not quite as rocky as it was before. This way, we're effectively storing more information about the shape of the ball. Then, when we use the marching cubes algorithm with interpolation, we get a much cleaner, smoother shape.</p>
+<p>For this reason, our voxels store a byte of 'density', somewhere between 0 and 255. This turns out to be enough precision to get smooth-looking islands.</p>
+<h2 id="creating-islands">Creating islands</h2>
+<p>Our game does not call for spheres, but for islands, icebergs, asteroids and various other natural looking shapes. So we need to generate voxels which will create the sort of shapes we want when they get meshed with marching cubes. It also needs to be very fast, so the players can easily change generation parameters and produce different islands to play on.</p>
+<p>We'll talk a little bit later about how, to make it efficient, we need to split the world into small chunks that can be processed in parallel. The upshot of this is that we need to be able to calculate each voxel independently of what's going on elsewhere on the terrain. This rules out some techniques like erosion simulation, and instead limits us to methods based on noise.</p>
+<p>The idea is in a sense similar to a shader: we have a 'generation function' which takes as input the 3D position and generates a voxel value. So what should that generation function do?</p>
+<h3 id="noise">Noise</h3>
+<p>Noise is one of the absolute core tools of procedural graphics, and it refers to a deterministic but random-looking function of space. There are many types: simplex noise, value noise, Voronoi noise etc, which have different results.</p>
+<p>Noise functions all generally work by evaluating some kind of spatial hash function that can be computed from a position. You can read many excellent guides on the mathematical details of noise functions on <a href="https://catlikecoding.com/unity/tutorials/pseudorandom-noise/">Catlike Coding</a>; we won't go into too much detail here except to briefly summarise that we primarily used Unity's built in <code>math.snoise</code> function to generate simplex noise, and added multiple octaves to create fractal noise.</p>
+<p>But noise on its own is generally not enough. We had certain additional requirements: the result needed to look island-shaped, and it needed to generate materials such as rock and sand in a natural-looking way.</p>
+<h3 id="from-noise-to-surface">From noise to surface</h3>
+<p><cite>Boom Boom Hamster Doom</cite> has two types of map: islands and asteroids.</p>
+<p>For islands, we first generate the noise in 2D, and then generate the voxels in vertical columns.</p>
+<p>The idea is that as we go up from the bottom of the voxel volume, we subtract the height of our voxel from the value calculated by the noise function. At some point, the decreasing values will pass across the isosurface value, resulting in terrain at that height.</p>
+<p>This means the initial generation is essentially a 2D heightmap (for islands), but it can be carved up in a fully 3D way during the game. A slightly more complex approach would be needed to generate things like overhangs or caves.</p>
+<p>Much like a fragment shader, which works on groups of four pixels at once, I took the approach of generating four columns of voxels at the same time. This allows me to also calculate the <em>gradient</em> of the ground at that position using a numerical method, which can be used as an input to further calculations.</p>
+<p>(It also allows certain calculations to potentially more easily be vectorised, although I do not have analytics to prove whether it really is faster.)</p>
+<h3 id="shaping-the-island">Shaping the island</h3>
+<p>The noise by itself gives a bumpy surface, looking something vaguely like a mountain range. To make an island instead, we need the height of the land to fall away as we move away from the centre. This led to the idea of 'shape functions': we calculate the noise and multiply it by some other function that gives the 'overall shape' of the island.</p>
+<p>What functions are these? Here's what I came up with...</p>
+<ul>
+<li>Gaussian falloff, which creates a nice smooth hill</li>
+<li>smoothstep falloff, which creates a steep cliff around the edge of an island, like a cake - either in circular or rectangular variants</li>
+<li>two Gaussians, creating two nearby islands that blend into each other, or a flat island with a mountain on it</li>
+<li>a Gaussian subtracted from another Gaussian, creating a ring shape (an atoll) or a crescent</li>
+</ul>
+<p>Each of these have some randomisation parameters, for example, the height and radius of the Gaussian, or the distance between the two islands in the double Gaussian.</p>
+<h3 id="shaping-asteroids">Shaping asteroids</h3>
+<p>Asteroids take a slightly different approach. They start with 3D rather than 2D noise, which creates a bunch of lumps in 3D space. We multiply this by one of the 2D generation functions, and also by a vertical Gaussian. This creates a kind of lumpy potato-like shape; the different shaping functions from the island can also be used to, for example, create a hole going through the middle of the asteroid.</p>
+<h2 id="terrain-materials">Terrain materials</h2>
+<p>Our terrain isn't just made of one substance. Depending on the various biomes visited in our game, it might be made of various materials such as rock or ice. Additionally, during the game, the material might get changed---for example, an explosion could burn the terrain.</p>
+<p>Each voxel consists of four bytes. The first byte is the density, used to compute the marching-cubes surface. The remaining three bytes store various kinds of material information. Each byte records a sliding scale from 0-255. This allows us to have gradual, more natural-looking transitions between different materials in the shading.</p>
+<p>For the first 'mountain' biome, which depicts a rocky island with temperate trees on it, the three bytes are 'rocky', 'sandy' and 'burned'. 'Rocky' captures the difference between soil and rock. 'Sandy' makes that into sand and sandy rock (at least in theory). 'Burned' is not used at generation time, but when explosions damage the terrain, it also increases the burned byte.</p>
+<h3 id="from-voxels-to-vertices">From voxels to vertices</h3>
+<p>In geometry, a 'vertex' is a point at the corner of a face. In computer graphics, a vertex is essentially a data structure. It stores not just the position of the point, but also the normal (used in shading calculations), the UV coordinate (used in applying textures), and any other data the programmer might care to pass to the GPU, like a vertex colour.</p>
+<p>The vertex colour gives us four bytes per vertex (the classic RGBA quadruplet); Unity converts these into floating point values automatically when we use them in the shader. So, when we generate the mesh, we interpolate the rockiness, sandiness and burnedness between the voxels, and store them in the vertex colours. Then, the shader uses those vertex colours to assign the appearance of different materials.</p>
+<p>You might notice we have a byte left over there! I still have some plans for that byte, which I'll come back to in a future article.</p>
+<h3 id="texture-sampling">Texture sampling</h3>
+<p>When we display a mesh in computer graphics, we usually apply 'texture' images across the surface to add detail. To calculate which parts of the shader to display, each vertex stores texture coordinates, also known as UVs. This is essentially a pair of floating point numbers.</p>
+<p>Assigning UVs is one of the more technical aspects of creating assets for games. You have all sorts of considerations---texel density, distortion, and seams to name a few. But since we are procedurally generating meshes from voxels, we have no way to assign UVs. A different approach is needed.</p>
+<p>We could sample the texture simply from the vertex position, but the problem is textures are 2D and the world is 3D, so there will always be a direction where this texture appears stretched. Let's call this the distorted direction.</p>
+<p>The solution to this is a method called 'triplanar mapping'.</p>
+<p>Triplanar mapping is useful for textures where there is a lot of even detail, like a grass or dirt texture. The insight of this method is that the stretching will be most problematic on faces that are parallel to the distorted direction. So, if we sample the texture three times, each at right angles to the others, we can pretty much cover our bases; then each pixel can choose which texture to use that will give the least stretching.</p>
+<p>We use the surface normal to work out which way a surface is facing. If the normal is lined up perfectly with a given texture, we just use that texture. If it's in-between, we can blend between the two textures. As long as the textures have lots of small details, any artefacts from the blending are hard to see.</p>
+<h2 id="implementing-marching-cubes-terrain">Implementing marching cubes terrain</h2>
+<p>We are not the first people to make Marching Cubes. Our method builds off the work of <a href="https://github.com/Eldemarkki/Marching-Cubes-Terrain">Eldemarkki</a>, although in the end I rewrote most of his code. I was in part trying to optimise it, in part adjusting it to fit our needs, but honestly the biggest gain is that rewriting something teaches you a <em>lot</em> about how it works.</p>
+<p>Eldemarkki's code already makes use of Burst-compiled jobs, which allow us to move the voxel calculations off the main thread. Since the Quest is not fast enough to process the entire island's generation and marching cubes in a single frame, we use an approach that allows us to spread the work over multiple frames.</p>
+<h3 id="chunks">Chunks</h3>
+<p>Like most voxel based games, we don't store all our voxels in one giant array, but split them into 'chunks' that cover a cuboid volume of the game world.</p>
+<p>Each chunk is associated with an array of voxels, and generates its own mesh. It overlaps with the adjacent chunk at the edge (there are some redundant voxels at the edges of each chunk), so the meshes line up perfectly, even when they get blown up. That's the basic idea.</p>
+<p>In code, each chunk is associated with a <code>NativeArray</code> of voxel data structs... well, sorta.</p>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span style="color:#b48ead;">public struct </span><span>VoxelDataAtlas : </span><span style="color:#a3be8c;">IComponentData
+</span><span>{
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeParallelHashMap&lt;int3, UnsafeArray&lt;VoxelDataElement&gt;&gt; </span><span style="color:#bf616a;">chunks</span><span>;
+</span><span>}
+</span></code></pre>
+<p>Unity's safety system gets fussy if you try to nest native containers inside a job. Since we knew our access pattern would be safe, we made an 'unsafe' variant of a <code>NativeArray</code> which does not have these restrictions.</p>
+<p>There is evidently some indirection here. To get your hands on voxel data, you have to have the <code>int3</code> index of the chunk, which gets hashed to look up an <code>UnsafeArray</code> struct, which controls the pointer to the actual array. You only really need to do this a few times though, so it's not a big issue.</p>
+<h3 id="the-dance-of-the-jobs">The dance of the jobs</h3>
+<p>So how do we actually process that data? As mentioned above, our tools are two Unity features called the Burst compiler and Job system.</p>
+<p>Burst compiles a limited subset of C# using LLVM-based tech to get performance comparable to an optimised C compiler; it is kind of like a limited version of Rust, a low-level language with some features from a more recent one. The main limitation is that it rules out any managed code: no non-static classes, only struct; only blittable value types; and so on. And, most importantly, you have to manage your own memory using Unity's 'Native' data structures (<code>NativeArray</code>, <code>NativeHashMap</code> and so on), which contain a pointer to the actual data and some kind of thread safety information that interacts with the job system.</p>
+<p>The job system is designed to make it easy to have your game code be multithreaded. You create structs which implement an appropriate interface, such as <code>IJob</code>, and hand them over to Unity to schedule on one of a number of worker threads, depending on the cores available on your CPU. On the Quest, we only have two worker threads. Job scheduling involves a significant overhead, a subject we'll get into in another article, so for small jobs it's frequently better to do them on the main thread, but these aren't small jobs.</p>
+<p>For each chunk, a series of jobs need to be performed at terrain generation time:</p>
+<ul>
+<li>first, a voxel generation job must generate the initial voxel values</li>
+<li>second, a marching cubes job must generate the mesh data (vertices and triangles)</li>
+<li>third, a physics collider job must generate a collider from this mesh data</li>
+</ul>
+<p>When all the chunk meshes are generated, we can combine and smooth the meshes to create the render mesh---more on that later.</p>
+<p>Now, whenever something modifies the terrain, such as an explosion, we modify the voxel data for certain chunks. Then we need to re-run this process for each modified chunk, starting from the marching cubes stage.</p>
+<p>We can think of these jobs like links in a chain. On each frame, we check the active jobs to see if they're finished yet. If they are, we extract the finished data, deallocate any arrays that need deallocating, and schedule the next job in the chain if necessary. The algorithm goes something like...</p>
+<ul>
+<li>check if any collider jobs have finished, and update the entities</li>
+<li>check if any marching cubes jobs have finished, and schedule collider jobs for each one</li>
+<li>check if any voxel generation jobs have finished, and schedule marching cubes jobs for each one</li>
+<li>schedule voxel generation jobs up to the current limit</li>
+<li>if no marching cubes jobs are pending, combine and smooth the meshes</li>
+</ul>
+<p>Since it has to deal with managed types like meshes, the terrain system has to be a managed system. The pending jobs are recorded in dictionaries which map the chunk index (see below) to the corresponding pending job. Additional dictionaries keep track of the entities for each chunk and the meshes for each entity. This is not necessarily the most efficient storage, but it is not the bottleneck.</p>
+<p>With this high-level overview in hand, lets drill into the details.</p>
+<h2 id="the-coordinate-system-forest">The coordinate system forest</h2>
+<p>One of the headaches I encountered when I first started on this project was the rather inconsistent language used to refer to the different coordinates - voxels and cubes, coordinates or indices, or maybe even an 'Xyz'. Not to mention needing Axis-Aligned Bounding Boxes for certain calculations.</p>
+<p>I wanted consistent language to make reasoning about everything else easier. The language I settled on is...</p>
+<dl>
+<dt>position</dt>
+<dd><code>float3</code>, position vector relative to the origin of the voxel world</dd>
+<dt>chunk index</dt>
+<dd><code>int3</code>, locates a chunk in the world</dd>
+<dt>voxel index</dt>
+<dd><code>int3</code>, locates a voxel inside a chunk</dd>
+<dt>linear voxel index</dt>
+<dd><code>int</code>, the actual array index of a voxel</dd>
+<dt>voxels per chunk</dt>
+<dd>positive `int3`, the number of voxels along each axis of a chunk</dd>
+<dt>cubes per chunk</dt>
+<dd>one less on each axis than the <i>voxels per chunk</i>, since cubes sit in between voxels</dd>
+<dt>dimensions</dt>
+<dd>the floating point size of something (e.g. a chunk or the whole world)</dd>
+<dt>bounds</dt>
+<dt>AABB</dt>
+<dd>the standard floating-point axis-aligned bounding box provided by Unity</dd>
+<dt>voxel AABB</dt>
+<dd>a structure that describes a cubic region of voxels inside a chunk, with <i>voxel indices</i> for the corners</dd>
+</dl>
+<p>This is why I called the lookup for voxel data an 'atlas' rather than the more obvious 'index'. <small>There's a reason naming is one of the hard problems of computer science, let's just say.</small></p>
+<h3 id="finding-your-place">Finding your place</h3>
+<p>With this scheme in mind, we needed code to map from positions in regular floating-point space to the discretised voxel space, and back. To add an additional wrinkle, I wanted the number of chunks along a given axis to potentially be an odd number, and still have its centre on the origin. In that case, the chunk at (0,0,0) is centred on the origin; otherwise it has its bottom-left-back corner on the origin.</p>
+<p>This led to a bunch of functions like this...</p>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span style="color:#b48ead;">public </span><span>int3 </span><span style="color:#8fa1b3;">chunkIndexContaining</span><span>(float3 </span><span style="color:#bf616a;">position</span><span>)
+</span><span>{
+</span><span>    float3 </span><span style="color:#bf616a;">axisOddnessOffset </span><span>= </span><span style="color:#d08770;">0.5</span><span style="color:#b48ead;">f </span><span>* (float3) (</span><span style="color:#bf616a;">chunksPerWorld </span><span>% </span><span style="color:#d08770;">2</span><span>);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return </span><span>(int3) </span><span style="color:#bf616a;">math</span><span>.</span><span style="color:#bf616a;">floor</span><span>(((</span><span style="color:#bf616a;">position </span><span>- </span><span style="color:#bf616a;">origin</span><span>) / </span><span style="color:#bf616a;">chunkDimensions</span><span>) + </span><span style="color:#bf616a;">axisOddnessOffset</span><span>);
+</span><span>}
+</span></code></pre>
+<p>...which takes a position in world space and figures out which chunk contains it. Nothing too complicated, but making sure there aren't any sign errors can be fiddly.</p>
+<h3 id="a-brief-aside-on-data-ordering">A brief aside on data ordering</h3>
+<p>'3D' arrays are essentially a bunch of concated 1D arrays, so there is also a question of which order to arrange the voxel data in a chunk. You want data to be easily read into the CPU as full cache lines, to minimise the amount the CPU (fast) has to talk to memory (slow). For this reason, I wanted the y direction to be the most closely packed; the conversion from voxel index to linear voxel index is...</p>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span style="color:#b48ead;">public int </span><span style="color:#8fa1b3;">linearVoxelIndex</span><span>(int3 </span><span style="color:#bf616a;">voxelIndex</span><span>)
+</span><span>{
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">voxelIndex</span><span>.</span><span style="color:#bf616a;">z </span><span>* </span><span style="color:#bf616a;">voxelsPerChunk</span><span>.</span><span style="color:#bf616a;">y </span><span>* </span><span style="color:#bf616a;">voxelsPerChunk</span><span>.</span><span style="color:#bf616a;">x </span><span>+ </span><span style="color:#bf616a;">voxelIndex</span><span>.</span><span style="color:#bf616a;">x </span><span>* </span><span style="color:#bf616a;">voxelsPerChunk</span><span>.</span><span style="color:#bf616a;">y </span><span>+ </span><span style="color:#bf616a;">voxelIndex</span><span>.</span><span style="color:#bf616a;">y</span><span>;
+</span><span>}
+</span></code></pre>
+<p>Crucially this is <em>voxels</em> per chunk not <em>cubes</em> per chunk.</p>
+<p>I have not actually measured whether this ordering actually makes generation faster. Maybe it's a pointless non-optimisation. However, it does keep things conceptually simple during generation.</p>
+<h2 id="voxel-generation-the-nitty-gritty">Voxel generation: the nitty gritty</h2>
+<p>So with all the preliminaries out of the way, this is the <em>interesting</em> part. In my book, anyway.</p>
+<p>As discussed above, the basic calculation is to generate a 2D heightmap using fractal gradient noise (based on the <code>snoise</code> function provided by Unity), multiply it with a shaping function, and then generate the voxel values by decreasing linearly in columns along the y direction. To this basic calculation, I added some additional features like gradients and terracing.</p>
+<p>The general approach at the generation stage is to provide myself with useful pieces of information that I can combine artistically. For example...</p>
+<h3 id="gradients">Gradients</h3>
+<p>I generate four columns of voxel data at once, essentially a little square, of coordinates along the lines of (x,y), (x+1, y), (x, y+1) and (x+1, y+1). This allows me to write many steps in terms of vector types like <code>float4</code>. At the time I believed this would hopefully allow Burst to more readily use SIMD commands to crunch along the data faster, but I hesitate to claim that is true without profiling and looking at the actual compiled code.</p>
+<p>The more tangible advantage of processing vertices in this way is that we can compute the gradient of the terrain numerically.</p>
+<p>First we generate the floating-point position of each voxel column:</p>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span>float2 </span><span style="color:#bf616a;">voxelPositionNormalised00
+</span><span>    = (</span><span style="color:#bf616a;">chunkBounds</span><span>.</span><span style="color:#bf616a;">Min</span><span>.</span><span style="color:#bf616a;">xz </span><span>+ new float2 (</span><span style="color:#bf616a;">x</span><span>, </span><span style="color:#bf616a;">z</span><span>) * </span><span style="color:#bf616a;">voxelSpacing </span><span>- </span><span style="color:#bf616a;">worldBounds</span><span>.</span><span style="color:#bf616a;">Center</span><span>.</span><span style="color:#bf616a;">xz</span><span>) / </span><span style="color:#bf616a;">worldBounds</span><span>.</span><span style="color:#bf616a;">Extents</span><span>.</span><span style="color:#bf616a;">xz</span><span>;
+</span><span>float2 </span><span style="color:#bf616a;">voxelPositionNormalised10
+</span><span>    = </span><span style="color:#bf616a;">voxelPositionNormalised00 </span><span>+ new float2(</span><span style="color:#bf616a;">voxelSpacing</span><span>, </span><span style="color:#d08770;">0</span><span>) / </span><span style="color:#bf616a;">worldBounds</span><span>.</span><span style="color:#bf616a;">Extents</span><span>.</span><span style="color:#bf616a;">xz</span><span>;
+</span><span>float2 </span><span style="color:#bf616a;">voxelPositionNormalised01
+</span><span>    = </span><span style="color:#bf616a;">voxelPositionNormalised00 </span><span>+ new float2(</span><span style="color:#d08770;">0</span><span>, </span><span style="color:#bf616a;">voxelSpacing</span><span>) / </span><span style="color:#bf616a;">worldBounds</span><span>.</span><span style="color:#bf616a;">Extents</span><span>.</span><span style="color:#bf616a;">xz</span><span>;
+</span><span>float2 </span><span style="color:#bf616a;">voxelPositionNormalised11
+</span><span>    = </span><span style="color:#bf616a;">voxelPositionNormalised00 </span><span>+ new float2(</span><span style="color:#bf616a;">voxelSpacing</span><span>, </span><span style="color:#bf616a;">voxelSpacing</span><span>) / </span><span style="color:#bf616a;">worldBounds</span><span>.</span><span style="color:#bf616a;">Extents</span><span>.</span><span style="color:#bf616a;">xz</span><span>;
+</span></code></pre>
+<p>Then we feed each of these into a noise function and evaluate the shape function at each position:</p>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span>float4 </span><span style="color:#bf616a;">terrainNoise
+</span><span>    = new float4 (
+</span><span>        </span><span style="color:#bf616a;">OctaveNoise</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised00</span><span>, </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseFrequency</span><span>,
+</span><span>            </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseOctaveCount</span><span>, </span><span style="color:#bf616a;">noiseOffset</span><span>) * </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">amplitude</span><span>,
+</span><span>        </span><span style="color:#bf616a;">OctaveNoise</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised10</span><span>, </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseFrequency</span><span>,
+</span><span>            </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseOctaveCount</span><span>, </span><span style="color:#bf616a;">noiseOffset</span><span>) * </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">amplitude</span><span>,
+</span><span>        </span><span style="color:#bf616a;">OctaveNoise</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised01</span><span>, </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseFrequency</span><span>,
+</span><span>            </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseOctaveCount</span><span>, </span><span style="color:#bf616a;">noiseOffset</span><span>) * </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">amplitude</span><span>,
+</span><span>        </span><span style="color:#bf616a;">OctaveNoise</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised11</span><span>, </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseFrequency</span><span>,
+</span><span>            </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">noiseOctaveCount</span><span>, </span><span style="color:#bf616a;">noiseOffset</span><span>) * </span><span style="color:#bf616a;">terrainSettings</span><span>.</span><span style="color:#bf616a;">amplitude
+</span><span>    );
+</span><span>
+</span><span style="color:#bf616a;">terrainNoise
+</span><span>    *= new float4 (
+</span><span>        </span><span style="color:#bf616a;">falloffFunction</span><span>.</span><span style="color:#bf616a;">falloff</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised00</span><span>, </span><span style="color:#bf616a;">random</span><span>),
+</span><span>        </span><span style="color:#bf616a;">falloffFunction</span><span>.</span><span style="color:#bf616a;">falloff</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised10</span><span>, </span><span style="color:#bf616a;">random</span><span>),
+</span><span>        </span><span style="color:#bf616a;">falloffFunction</span><span>.</span><span style="color:#bf616a;">falloff</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised01</span><span>, </span><span style="color:#bf616a;">random</span><span>),
+</span><span>        </span><span style="color:#bf616a;">falloffFunction</span><span>.</span><span style="color:#bf616a;">falloff</span><span>(</span><span style="color:#bf616a;">voxelPositionNormalised11</span><span>, </span><span style="color:#bf616a;">random</span><span>)
+</span><span>    );
+</span></code></pre>
+<p>We now have the noise values for all four columns in a float4.</p>
+<p>I calculate the gradient in a way that is similar to the <code>ddx</code>, <code>ddy</code> and <code>ddxy</code> functions <a href="https://gamedev.stackexchange.com/questions/62648/what-does-ddx-hlsl-actually-do">available in shader programming</a>. I method called the <a href="https://en.wikipedia.org/wiki/Roberts_cross">Roberts cross</a>, due to technicalities discussed in <a href="https://bartwronski.com/2021/02/28/computing-gradients-on-grids-forward-central-and-diagonal-differences/">this blog post by Bart Wronski</a>...</p>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span style="color:#b48ead;">float </span><span style="color:#bf616a;">terrainDerivative </span><span>= </span><span style="color:#bf616a;">math</span><span>.</span><span style="color:#bf616a;">length</span><span>(new float2 (</span><span style="color:#bf616a;">terrainNoise</span><span>.</span><span style="color:#bf616a;">w </span><span>- </span><span style="color:#bf616a;">terrainNoise</span><span>.</span><span style="color:#bf616a;">x</span><span>, </span><span style="color:#bf616a;">terrainNoise</span><span>.</span><span style="color:#bf616a;">y </span><span>- </span><span style="color:#bf616a;">terrainNoise</span><span>.</span><span style="color:#bf616a;">z</span><span>));
+</span></code></pre>
+<p>This generates a 2D vector representing the magnitude of the gradient at this point. <small>Strictly speaking, I should additionally multiply this by $\sqrt(2)$, but since I always multiply it by some arbitrary parameter before using it, that can be skipped.</small></p>
+<p>Why do we want to know the gradient? Well, we can use it for various subsequent calculations. For example, I wanted steep slopes to show exposed rock faces. I can reduce the thickness of the sediment layer based on the gradient. For now, that's all I'm using gradients for.</p>
+<h3 id="terracing">Terracing</h3>
+<p>One of our levels is an ice level, involving essentially a large floating iceberg. One of the interesting properties of ice is that it tends to form large flat slabs, rather than the smoothly varying bumps of our noise. So, I came up with the idea of adding a 'terracing' effect to the heightmap, pushing towards creating a 'stairs'-like effect.</p>
+<p>The core idea of 'terracing' is that by adding an appropriately scaled sinusoid to the raw output of the generation function, you can push a linear slope towards something a bit more like steps. The calculation is $$t(x)=x+ap\sin\frac{x}{p}$$where $p$ is the period of the steps and $a$ between 0 and 1 controls how strong the effect is. (You can potentially iterate this calculation multiple times to get even steeper steps.)</p>
+<h2 id="draw-calls-and-smoothing">Draw calls and smoothing</h2>
+<p>When I joined the project, every chunk generated its own little mesh. Since we're rendering in Entities Graphics, it is <em>supposed</em> to do clever batching stuff in the way it sends data to the GPU. This didn't seem to be happening; instead we had some 50-something draw calls simply from terrain chunks.</p>
+<p>Draw calls are very slow on the Quest. One of the first big performance wins was to combine all the generated terrain meshes into one single render mesh and only render this, meaning only one draw call for the whole terrain. I don't remember exactly how many milliseconds this saved, but it went from sub-72fps to clean 72fps.</p>
+<p>But combining the meshes in this way gave another, even more exciting possibility. The marching cubes algorithm, by default, generates a sharply faceted triangle mesh. Each cube generates its own vertices, with their own normals. To get our terrain to look smoother, we would need to <strong>combine vertices at the same location</strong>, and <strong>average out their normals</strong>.</p>
+<p>The problem with combining vertices based on position is that two vertices in the 'same' position might have an imperceptible difference thanks to the imprecision of floating point calculations. So you need to consider vertices that are 'close enough' to be the same. The solution to this is actually remarkably simple...</p>
+<ul>
+<li>multiply every position by some fixed constant (the larger the constant, the smaller the maximum gap between vertices to be combined)</li>
+<li>round each coordinate to an integer (so you've converted a <code>float3</code> to an <code>int3</code>)</li>
+<li>use a hashmap (i.e. a dictionary) to map each integer position to a linear index, which we will call the <dfn>canonical index</dfn></li>
+<li>every time you test a vertex, check if that position already exists in the hashmap. if it does, use the existing canonical index. if not, add the vertex data (<em>not</em> rounded) to the canonical vertices array and store its index in the hashmap</li>
+<li>either way, add the vertex normal to the normal of the canonical vertex</li>
+<li>store another array with each the canonical index for each original index</li>
+</ul>
+<p>Then once you're done, you iterate over the canonical vertices again and normalise their normals (meaning, you divide each vector by its length, making it a valid normal vector). You also need to update the triangles, which are indices into the vertex array, to point to the <em>new</em> indices into the vertex array.</p>
+<p>Here's the code which does that, which is perhaps easier to understand:</p>
+<details>
+<summary>Code for smoothing vertices</summary>
+<pre data-lang="cs" style="background-color:#2b303b;color:#c0c5ce;" class="language-cs "><code class="language-cs" data-lang="cs"><span>[</span><span style="color:#bf616a;">BurstCompile</span><span>]
+</span><span style="color:#b48ead;">public struct </span><span>CombineAndSmoothVerticesJob : </span><span style="color:#a3be8c;">IJob
+</span><span>{
+</span><span>    [</span><span style="color:#bf616a;">ReadOnly</span><span>]
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeArray&lt;MeshingVertexData&gt; </span><span style="color:#bf616a;">vertexData</span><span>;
+</span><span>
+</span><span>    [</span><span style="color:#bf616a;">ReadOnly</span><span>]
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeArray&lt;</span><span style="color:#b48ead;">uint</span><span>&gt; </span><span style="color:#bf616a;">indices</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeArray&lt;</span><span style="color:#b48ead;">uint</span><span>&gt; </span><span style="color:#bf616a;">newIndices</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeArray&lt;</span><span style="color:#b48ead;">uint</span><span>&gt; </span><span style="color:#bf616a;">indexRemapping</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeList&lt;MeshingVertexData&gt; </span><span style="color:#bf616a;">canonicalVertexData</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">public </span><span>NativeHashMap&lt;int3,</span><span style="color:#b48ead;">uint</span><span>&gt; </span><span style="color:#bf616a;">canonicalIndices</span><span>;
+</span><span>
+</span><span>    [</span><span style="color:#bf616a;">BurstCompile</span><span>]
+</span><span>    </span><span style="color:#b48ead;">public void </span><span style="color:#8fa1b3;">Execute</span><span>()
+</span><span>    {
+</span><span>        </span><span style="color:#b48ead;">uint </span><span style="color:#bf616a;">canonicalVertices </span><span>= </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>        </span><span style="color:#65737e;">//find all unique vertices
+</span><span>        </span><span style="color:#b48ead;">for </span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">i </span><span>= </span><span style="color:#d08770;">0</span><span>; </span><span style="color:#bf616a;">i </span><span>&lt; </span><span style="color:#bf616a;">vertexData</span><span>.</span><span style="color:#bf616a;">Length</span><span>; ++</span><span style="color:#bf616a;">i</span><span>)
+</span><span>        {
+</span><span>            </span><span style="color:#b48ead;">uint </span><span style="color:#bf616a;">canonicalIndex</span><span>;
+</span><span>            </span><span style="color:#b48ead;">if </span><span>(!</span><span style="color:#bf616a;">canonicalIndices</span><span>.</span><span style="color:#bf616a;">TryGetValue</span><span>(</span><span style="color:#bf616a;">Key</span><span>(</span><span style="color:#bf616a;">vertexData</span><span>[</span><span style="color:#bf616a;">i</span><span>].</span><span style="color:#bf616a;">position</span><span>),</span><span style="color:#b48ead;">out </span><span style="color:#bf616a;">canonicalIndex</span><span>))
+</span><span>            {
+</span><span>                </span><span style="color:#bf616a;">canonicalIndex </span><span>= </span><span style="color:#bf616a;">canonicalVertices</span><span>;
+</span><span>                ++</span><span style="color:#bf616a;">canonicalVertices</span><span>;
+</span><span>                </span><span style="color:#bf616a;">canonicalIndices</span><span>.</span><span style="color:#bf616a;">Add</span><span>(</span><span style="color:#bf616a;">Key</span><span>(</span><span style="color:#bf616a;">vertexData</span><span>[</span><span style="color:#bf616a;">i</span><span>].</span><span style="color:#bf616a;">position</span><span>), </span><span style="color:#bf616a;">canonicalIndex</span><span>);
+</span><span>                </span><span style="color:#bf616a;">canonicalVertexData</span><span>.</span><span style="color:#bf616a;">Add</span><span>(</span><span style="color:#bf616a;">vertexData</span><span>[</span><span style="color:#bf616a;">i</span><span>]);
+</span><span>            } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>                </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">vertex </span><span>= </span><span style="color:#bf616a;">canonicalVertexData</span><span>[(</span><span style="color:#b48ead;">int</span><span>) </span><span style="color:#bf616a;">canonicalIndex</span><span>];
+</span><span>                </span><span style="color:#bf616a;">vertex</span><span>.</span><span style="color:#bf616a;">normal </span><span>+= </span><span style="color:#bf616a;">vertexData</span><span>[</span><span style="color:#bf616a;">i</span><span>].</span><span style="color:#bf616a;">normal</span><span>;
+</span><span>                </span><span style="color:#bf616a;">canonicalVertexData</span><span>[(</span><span style="color:#b48ead;">int</span><span>) </span><span style="color:#bf616a;">canonicalIndex</span><span>] = </span><span style="color:#bf616a;">vertex</span><span>;
+</span><span>            }
+</span><span>            </span><span style="color:#bf616a;">indexRemapping</span><span>[</span><span style="color:#bf616a;">i</span><span>] = </span><span style="color:#bf616a;">canonicalIndex</span><span>;
+</span><span>        }
+</span><span>
+</span><span>        </span><span style="color:#65737e;">//remap the index buffer. the length should stay the same
+</span><span>        </span><span style="color:#b48ead;">for </span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">i </span><span>= </span><span style="color:#d08770;">0</span><span>; </span><span style="color:#bf616a;">i </span><span>&lt; </span><span style="color:#bf616a;">indices</span><span>.</span><span style="color:#bf616a;">Length</span><span>; ++</span><span style="color:#bf616a;">i</span><span>)
+</span><span>        {
+</span><span>            </span><span style="color:#bf616a;">newIndices</span><span>[</span><span style="color:#bf616a;">i</span><span>] = </span><span style="color:#bf616a;">indexRemapping</span><span>[(</span><span style="color:#b48ead;">int</span><span>) </span><span style="color:#bf616a;">indices</span><span>[</span><span style="color:#bf616a;">i</span><span>]];
+</span><span>        }
+</span><span>
+</span><span>        </span><span style="color:#65737e;">//normalize the summed vertices
+</span><span>        </span><span style="color:#b48ead;">for </span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">i </span><span>= </span><span style="color:#d08770;">0</span><span>; </span><span style="color:#bf616a;">i </span><span>&lt; </span><span style="color:#bf616a;">canonicalVertices</span><span>; ++</span><span style="color:#bf616a;">i</span><span>)
+</span><span>        {
+</span><span>            </span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">vertex </span><span>= </span><span style="color:#bf616a;">canonicalVertexData</span><span>[</span><span style="color:#bf616a;">i</span><span>];
+</span><span>            </span><span style="color:#bf616a;">vertex</span><span>.</span><span style="color:#bf616a;">normal </span><span>= </span><span style="color:#bf616a;">math</span><span>.</span><span style="color:#bf616a;">normalize</span><span>(</span><span style="color:#bf616a;">vertex</span><span>.</span><span style="color:#bf616a;">normal</span><span>);
+</span><span>            </span><span style="color:#bf616a;">canonicalVertexData</span><span>[</span><span style="color:#bf616a;">i</span><span>] = </span><span style="color:#bf616a;">vertex</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    [</span><span style="color:#bf616a;">BurstCompile</span><span>]
+</span><span>    </span><span style="color:#b48ead;">private </span><span>int3 </span><span style="color:#8fa1b3;">Key</span><span>(float3 </span><span style="color:#bf616a;">position</span><span>)
+</span><span>    {
+</span><span>        </span><span style="color:#65737e;">//more precision = smaller distance to merge vertices
+</span><span>        </span><span style="color:#65737e;">//e.g. with precision 100 vertices must match to the 2nd decimal place to merge
+</span><span>        </span><span style="color:#b48ead;">const int </span><span style="color:#bf616a;">precision </span><span>= </span><span style="color:#d08770;">100000</span><span>;
+</span><span>        </span><span style="color:#b48ead;">return </span><span>(int3) </span><span style="color:#bf616a;">math</span><span>.</span><span style="color:#bf616a;">round</span><span>(</span><span style="color:#bf616a;">position </span><span>* </span><span style="color:#bf616a;">precision</span><span>);
+</span><span>    }
+</span><span>}
+</span></code></pre>
+</details>
+<p>I don't average the other vertex data such as colour, since this logically <em>should</em> all be consistent for vertices that are at the same location.</p>
+<p>On the device this generally takes less than two milliseconds running on the main thread, so it can easily be done within a single frame as soon as the marching cubes jobs are finished. It's actually comparable to the time that Unity takes simply to combine the meshes prior to smoothing, and we might still be able to save a bit of time by concatenating the arrays ourselves inside Bursted code, at the cost of some complication in managing the index buffer.</p>
+
+        
+        
+<div class="docs-navigation d-flex justify-content-between">
+  
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+      
+      
+        
+          
+          
+          <a class="ms-auto" href="https:&#x2F;&#x2F;holonautic.github.io&#x2F;authors&#x2F;bryn-dickinson&#x2F;">
+            <div class="card my-1">
+              <div class="card-body py-2">
+                Bryn Dickinson &rarr;
+              </div>
+            </div>
+          </a>
+          
+          
+          
+        
+      
+    
+  
+</div>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+
+  
+    
+<footer class="footer text-muted">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 order-last order-lg-first">
+				<ul class="list-inline">
+					
+						<li class="list-inline-item">Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a></li>
+					
+				</ul>
+			</div>
+			<div class="col-lg-8 order-first order-lg-last text-lg-end">
+				<ul class="list-inline">
+					
+						
+							<li class="list-inline-item"><a href="https://holonautic.github.io/https://www.holonautic.com/privacy-policies/privacy-policy/">Privacy</a></li>
+						
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  
+
+  
+<script type="text/javascript" src="https://holonautic.github.io/js/main.js" defer></script>
+
+  <script type="text/javascript" src="https://holonautic.github.io/plugins/elasticlunr.min.js" defer></script>
+  <script type="text/javascript" src="https://holonautic.github.io/search_index.en.js" defer></script>
+  <script type="text/javascript" src="https://holonautic.github.io/js/search.js" defer></script>
+
+  
+</body>
+</html>
