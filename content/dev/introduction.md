@@ -1,7 +1,7 @@
 +++
 title = "Introduction"
-description = "An introduction to the Boom Boom Hamster Project."
-date = 2024-10-23
+description = "What goes in to a Boom Boom Hamster Doom? An overview of the project."
+date = 2024-10-23T12:00:00Z
 draft = false
 template = "dev/page.html"
 

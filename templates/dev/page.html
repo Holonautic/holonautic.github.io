@@ -1,5 +1,10 @@
 {% extends "page.html" %}
 
+{% import 'macros/math.html' as macros %}
+{% if page.extra.math or section.extra.math or config.extra.math %}
+{{ macros::math() }}
+{% endif %}
+
 {% block body %}
   {% set page_class = "docs single" %}
 {% endblock body %}
