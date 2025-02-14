@@ -2,7 +2,7 @@
 title = "Destructible Terrain"
 description = "A guide to fast voxel terrain in standalone VR."
 date = 2024-10-23T13:00:00Z
-draft = false
+draft = true
 template = "dev/page.html"
 
 [taxonomies]
