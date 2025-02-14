@@ -19,7 +19,7 @@ content = "Play with old friends or new,<br> on the Quest 2, 3 and 3S!"
 
 [[extra.list]]
 title = "Fully destructible islands"
-content = "Shoot the land out from under your enemy and drop them in the ocean. But watch out for buried explosives..."
+content = "Shoot the land out from under your enemy and drop them in the ocean."
 
 [[extra.list]]
 title = "Pushing the Quest to its limits"
@@ -27,6 +27,6 @@ content = "Physics. Voxels. Shiny water and detailed effects. 72fps."
 
 [[extra.list]]
 title = "Join the open beta"
-content = "Apply here for an invite."
+content = "<a href='https://forms.gle/WzsmNXMVsKeazxqQ6'>Apply here for an invite.</a>"
 
 +++
