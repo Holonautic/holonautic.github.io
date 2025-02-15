@@ -33,7 +33,7 @@
         </div>
         <div class="col-lg-9 col-xl-8 text-center">
           <p class="lead">{{ section.extra.lead | safe }}</p>
-          <a class="btn btn-primary btn-lg px-4 mb-2" href="{{ get_url(path=section.extra.url | default(value="/")) | safe }}" role="button">{{ section.extra.url_button | default(value="Join the beta!") }}</a>
+          <a class="btn btn-primary btn-lg px-4 mb-2" href="{{section.extra.url}}")) | safe }}" role="button">{{ section.extra.url_button | default(value="Join the beta!") }}</a>
         </div>
       </div>
     </section>
