@@ -29,10 +29,11 @@
       <div class="row justify-content-center">
         <div class="col-lg-12 text-center">
           {% set logo_image = resize_image(path="Logo.png", width=600, height=600, op="fit_width") %}
-          <h1 class="mt-0"><img src="{{logo_image.url}}" alt="Boom Boom Hamster Doom"></h1>
+          <h1 class="mt-0"><img class="mw-100" src="{{logo_image.url}}" alt="Boom Boom Hamster Doom"></h1>
         </div>
         <div class="col-lg-9 col-xl-8 text-center">
           <p class="lead">{{ section.extra.lead | safe }}</p>
+          <a class="btn btn-primary btn-lg px-4 mb-2" href="{{ get_url(path=section.extra.url | default(value="/")) | safe }}" role="button">{{ section.extra.url_button | default(value="Join the beta!") }}</a>
         </div>
       </div>
     </section>
