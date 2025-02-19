@@ -1,5 +1,5 @@
 /** Import Bootstrap functions */
-@import "../themes/adidoks/sass/bootstrap/scss/functions";
+@import "./bootstrap/scss/functions";
 
 /** Import theme variables */
 @import "../themes/adidoks/sass/common/variables";
@@ -7,7 +7,7 @@
 @import "variables";
 
 /** Import Bootstrap */
-@import "../themes/adidoks/sass/bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 /** Import theme styles */
 @import "../themes/adidoks/sass/common/fonts";
