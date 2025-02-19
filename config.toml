@@ -1,7 +1,7 @@
 # The URL the site will be built for
 base_url = "https://holonautic.github.io"
 title = "Boom Boom Hamster Doom"
-description = "social VR game // hamsters with missiles"
+description = "the social VR game of hamsters with missiles"
 
 # The site theme to use.
 theme = "adidoks"
