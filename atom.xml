@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Boom Boom Hamster Doom</title>
+    <subtitle>the social VR game of hamsters with missiles</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://holonautic.github.io/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://holonautic.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-10-23T12:00:00+00:00</updated>
+    <id>https://holonautic.github.io/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Introduction</title>
+        <published>2024-10-23T12:00:00+00:00</published>
+        <updated>2024-10-23T12:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://holonautic.github.io/dev/introduction/"/>
+        <id>https://holonautic.github.io/dev/introduction/</id>
+        
+        <content type="html" xml:base="https://holonautic.github.io/dev/introduction/">&lt;p&gt;I&#x27;m Bryn (aka &lt;a href=&quot;https:&#x2F;&#x2F;canmom.art&#x2F;&quot;&gt;canmom&lt;&#x2F;a&gt;), a programmer, technical artist and animator working on &lt;cite&gt;Boom Boom Hamster Doom&lt;&#x2F;cite&gt;. If you looked at the front page, you might have an idea what this game is about: teams of hamsters with missiles and guns, trying to blast each other into the ocean while making giant holes into everything nearby.&lt;&#x2F;p&gt;
+&lt;p&gt;It&#x27;s a genre of game with &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Artillery_game&quot;&gt;a storied tradition&lt;&#x2F;a&gt;, from &lt;cite&gt;War 3&lt;&#x2F;cite&gt; in 1972 to dozens of games called &lt;cite&gt;Artillery&lt;&#x2F;cite&gt;... and of course the one you probably know best, Team17&#x27;s &lt;cite&gt;Worms&lt;&#x2F;cite&gt; series. But! To date, nobody has made a game of this type for VR (so far as we know)...&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;cite&gt;Boom Boom Hamster Doom&lt;&#x2F;cite&gt; is a meeting of the artillery game with tabletop wargaming. The hamsters inhabit an island, floating in front of you. Everything you do is very tactile: you move your hamsters around by pinching your crab claw and pulling on little leashes. You aim the hamsters by pulling back from them like a catapult. You launch an airstrike by throwing it like a paper plane.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-challenges&quot;&gt;the challenges&lt;&#x2F;h2&gt;
+&lt;p&gt;This type of game has a &lt;em&gt;lot&lt;&#x2F;em&gt; of technical demands. Maybe you know this: in VR, performance is &lt;em&gt;mandatory&lt;&#x2F;em&gt;. If you can&#x27;t maintain 72FPS at all times, even hardy players will rapidly get motion sick. That means every frame has a hard time limit: about 14 milliseconds.&lt;&#x2F;p&gt;
+&lt;p&gt;Moreover, we&#x27;re running on what is essentially mobile hardware: a single ARM chip with limited specs (the Snapdragon XR2 in two different generations), and that imposes pretty severe limits on what is possible graphically. For example, ever noticed that essentially no Quest games have realtime shadows? There&#x27;s a very specific reason for that, to do with GPU architecture.&lt;&#x2F;p&gt;
+&lt;p&gt;Despite this, we&#x27;ve still got a surprisingly large number of toys to play with. The hardware is limited, but it&#x27;s not &lt;em&gt;old&lt;&#x2F;em&gt;, and you&#x27;ve got full-featured vertex and fragment shaders, and a couple of surprisingly zippy CPU cores to play with.&lt;&#x2F;p&gt;
+&lt;p&gt;Even so, we are asking a lot of this little device. Here&#x27;s some of the battles we&#x27;ll be discussing over the course of this series...&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;voxel-terrain&quot;&gt;voxel terrain&lt;&#x2F;h3&gt;
+&lt;p&gt;We need to blow holes in terrain from just about any angle, and that means voxels. I don&#x27;t mean &lt;cite&gt;Minecraft&lt;&#x2F;cite&gt;-style cubes here, but data arranged on a grid, a few bytes for each point.&lt;&#x2F;p&gt;
+&lt;p&gt;More precisely, our ground is an implicit surface, defined by the values of a 3D grid of voxel data, which we mesh using &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Marching_cubes&quot;&gt;marching cubes&lt;&#x2F;a&gt;. This is the technique used in PC games such as &lt;cite&gt;Deep Rock Galactic&lt;&#x2F;cite&gt;, &lt;cite&gt;No Man&#x27;s Sky&lt;&#x2F;cite&gt; and &lt;cite&gt;Space Engineers&lt;&#x2F;cite&gt;... but it&#x27;s rarely been used in standalone VR.&lt;&#x2F;p&gt;
+&lt;p&gt;The upshot of this is that we have a &lt;em&gt;lot&lt;&#x2F;em&gt; of data to crunch, very fast, whenever anything blows up.&lt;&#x2F;p&gt;
+&lt;p&gt;Besides that is the question of creating the island&lt;&#x2F;p&gt;
+&lt;p&gt;To pull this off in Unity, we needed to call on the might of the Burst compiler and Job system, and be smart with chunking the data and spreading the calculation across multiple frames. After that, shading the mesh has its own challenges---smoothing vertices, optimising draw calls, and texturing and lighting the procedurally generated terrain.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;networked-physics&quot;&gt;networked physics&lt;&#x2F;h3&gt;
+&lt;p&gt;Our game is a physics-based game, and a physics-based game that needs to maintain network state between as many as twelve different players. It also needs to be smooth and responsive enough to work in VR. That means rollback netcode.&lt;&#x2F;p&gt;
+&lt;p&gt;BBHD is server-authoritative, meaning that one of the players (the host or server) has the final word on game state. &lt;dfn&gt;Prediction&#x2F;rollback netcode&lt;&#x2F;dfn&gt; means that the game runs a few frames ahead of the latest information from the server, applying the most recent inputs from the player to minimise latency. But that means it can make mistakes! For various reasons: the actions of another player will &lt;em&gt;always&lt;&#x2F;em&gt; be different than expected since they consist of real-time 3D tracking, and on top of that, small divergences in physics calculations can gradually magnify into big differences.&lt;&#x2F;p&gt;
+&lt;p&gt;So whenever the client receives an update, if there&#x27;s a mistake (and there is nearly always a mistake), it has to resimulate from that point up to the current frame (a &#x27;rollback&#x27;). This means it may have to calculate quite a large number of physics steps in one frame---a problem that compounds as latency between players increases.&lt;&#x2F;p&gt;
+&lt;p&gt;The framework we eventually settled on was Unity DOTS Netcode, since this gave us the most robust and reliable network state. This means our game must be built in Unity&#x27;s Entity-Component-System framework, something which brought with it as many headaches as advantages...&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;dots-performance-woes&quot;&gt;DOTS performance woes&lt;&#x2F;h3&gt;
+&lt;p&gt;Our game is built in DOTS: the &#x27;&lt;a href=&quot;https:&#x2F;&#x2F;unity.com&#x2F;dots&quot;&gt;Data Oriented Technology Stack&lt;&#x2F;a&gt;&#x27;! Unity has been hard at work on DOTS for a long time, but most of the people who originally designed the system have left after... tumultuous times at Unity, so it presently exists in a strange kind of limbo. DOTS is supposed to offer &#x27;performance by default&#x27;: organise your code according to its patterns and you can expect things to run &lt;em&gt;much&lt;&#x2F;em&gt; faster than the old-fashioned way of MonoBehaviours and GameObjects. DOTS demos show impressive scenes of thousands and thousands of entities, thanks to cache-optimised memory layouts and efficient paralellisation and so on...&lt;&#x2F;p&gt;
+&lt;p&gt;...but it turns out this comes with a huge asterisk. Because for everything we gain in Burst compilation and so forth, we lose a great deal in overheads, particularly around system and job scheduling. Things that should take almost no time at all, like schedulling simple systems, might take as long as 0.1ms... which might not sound like a lot, but with all the things that the game has to do in a frame, it adds up &lt;em&gt;fast&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Our efforts to solve this led us to try rebuilding the game in a different framework, but after that had its own problems (we&#x27;ll get into that later, don&#x27;t worry), we came back to DOTS and found a kludgey solution to sidestep the job scheduling woes.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;rendering&quot;&gt;rendering&lt;&#x2F;h3&gt;
+&lt;p&gt;What&#x27;s the proper shader model for a stylised game like this? Somewhere colourful, between cel-shading and photorealistic rendering. How do we render fur and grass? How do we keep the colours harmonised? How do we make bright lights pop without bloom? How can we get around the lack of shadows? What about fancy effects, like parallax cracks inside the icebergs of the Ice biome?&lt;&#x2F;p&gt;
+&lt;p&gt;Every shader in this game is custom, and there&#x27;s a lot to talk about. Especially...&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;rendering-water&quot;&gt;rendering water&lt;&#x2F;h3&gt;
+&lt;p&gt;You want a nice looking ocean? I really, &lt;em&gt;really&lt;&#x2F;em&gt; did. Games like &lt;cite&gt;Sea of Thieves&lt;&#x2F;cite&gt; have been wowing us with the state of the art FFT-based water simulation, creating incredibly natural looking oceans which respond naturally to boats and similar. We had to find another way, by precalculating the ocean in Blender and baking it to a flipbook texture---and shading it well is another matter again.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;visual-effects&quot;&gt;visual effects&lt;&#x2F;h3&gt;
+&lt;p&gt;It&#x27;s a game about blowing things up, so of course we want nice explosions. But with everything else our game is doing, our overhead for particle simulations is &lt;em&gt;very&lt;&#x2F;em&gt; limited. Nevertheless, we have nice rocket trails, clouds of smoke and burning debris. Which requires finding ways to harmonise DOTS with the world of GameObjects, and that led to all sorts of strange problems...&lt;&#x2F;p&gt;
+&lt;p&gt;My colleague Alfon came up with all sorts of ingenious approaches to VFX, which we&#x27;ll cover in the VFX article.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;animation&quot;&gt;animation&lt;&#x2F;h3&gt;
+&lt;p&gt;We are a very small team, but our hamsters must express all the charm a hamster should, as they swing about a huge variety of weapons. I &lt;em&gt;love&lt;&#x2F;em&gt; animation, and I wanted our animations to be expressive through all the animation principles: weight, squash and stretch, overshoot and settle, etc. etc.&lt;&#x2F;p&gt;
+&lt;p&gt;But more than that, I strongly wanted physical continuity: the weapons should feel like objects with weight, that don&#x27;t just magically appear and disappear, or magnetically cling to a hamster&#x27;s back. At the same time, all these animations had to feel snappy, and not get in the way of gameplay---not to mention that our hamsters would have to run over uneven and unpredictable terrain. In an upcoming article I&#x27;ll go through the different iterations of animations we hit along the way, and the system we finally settled on.&lt;&#x2F;p&gt;
+&lt;p&gt;Also it had to run in DOTS, which &lt;em&gt;still&lt;&#x2F;em&gt; doesn&#x27;t have a proper, first-party animation system (and won&#x27;t until after Unity 6). Luckily, this is where third-party developers stepped up. We&#x27;ll go into the different DOTS animation systems that currently exist.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;ui-ux&quot;&gt;UI&#x2F;UX&lt;&#x2F;h3&gt;
+&lt;p&gt;Or, how do you build a game for crabs?&lt;&#x2F;p&gt;
+&lt;p&gt;How do you pick weapons for a hamster, lead her about the map, aim his shots and know which team they&#x27;re on? How do you inform the players about game state, when your world is a 3D volume that could be viewed from any angle? What does a game setup screen look like? A weapon unlock?&lt;&#x2F;p&gt;
+&lt;p&gt;Although VR games have been around for a good number of years now and conventions have emerged, the particular tactile style of our game demanded we find something a little new...&lt;&#x2F;p&gt;
+&lt;p&gt;(We&#x27;ll also talk about the calculations involved in creating a &lt;cite&gt;Demeo&lt;&#x2F;cite&gt;-like locomotion system, since that has rapidly become the standard for &#x27;tabletop-style&#x27; VR games.)&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;bots&quot;&gt;bots&lt;&#x2F;h3&gt;
+&lt;p&gt;Sometimes, nobody&#x27;s online. Or you want a practice game. So the game has a full-featured AI player thanks to my colleague Bas, which can choose the best weapon to use, manoeuvre hamsters, shoot across the map and generally present a seriously challenging game to rival a human player---while also now and then making a charming mistake.&lt;&#x2F;p&gt;
+&lt;p&gt;What does a fast entity-component-system AI look like? We&#x27;ll get into the design in this article.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;and-more&quot;&gt;and more...?&lt;&#x2F;h3&gt;
+&lt;p&gt;I mean, maybe more. We&#x27;ve got a lot to cover and we&#x27;re still working on the game. But I&#x27;m seriously proud of what we&#x27;ve put together here, and I&#x27;d love to share some of what&#x27;s going on under the hood of this thing. So, read on...&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Bryn Dickinson</title>
+        <published>2024-10-23T00:00:00+00:00</published>
+        <updated>2024-10-23T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://holonautic.github.io/authors/bryn-dickinson/"/>
+        <id>https://holonautic.github.io/authors/bryn-dickinson/</id>
+        
+        <content type="html" xml:base="https://holonautic.github.io/authors/bryn-dickinson/"></content>
+        
+    </entry>
+</feed>
