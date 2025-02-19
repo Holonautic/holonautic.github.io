@@ -81,7 +81,7 @@ library = "katex"  # options: "katex", "mathjax". default is "katex".
 [extra.open]
 enable = true
 # this image will be used as fallback if a page has no image of its own
-image = "doks.png"
+image = "opengraph.png"
 twitter_site = "holonautic"
 twitter_creator = "holonautic"
 facebook_author = "holonautic"
@@ -91,10 +91,10 @@ og_locale = "en_US"
 ## JSON-LD
 [extra.schema]
 type = "Organization"
-logo = "logo-doks.png"
-twitter = "https://twitter.com/aaranxu"
+logo = "android-chrome-512x512.png"
+twitter = "https://twitter.com/holonautic"
 linked_in = ""
-github = "https://github.com/aaranxu"
+github = "https://github.com/holonautic"
 section = "blog" # see config.extra.main~url
 ## Sitelinks Search Box
 site_links_search_box = false
@@ -122,7 +122,7 @@ weight = 20
 
 # Footer contents
 [extra.footer]
-info = 'Powered by <a href="https://www.netlify.com/">Netlify</a>, <a href="https://www.getzola.org/">Zola</a>, and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a>'
+info = 'Powered by <a href="https://www.getzola.org/">Zola</a> and <a href="https://github.com/aaranxu/adidoks">AdiDoks</a>'
 
 [[extra.footer.nav]]
 name = "Privacy"
